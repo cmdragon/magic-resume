@@ -4,6 +4,8 @@ import { ReactNode } from "react";
 import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import Document from "@/components/Document";
 
+export const runtime = 'edge';
+
 type Props = {
   children: ReactNode;
   params: { locale: string };

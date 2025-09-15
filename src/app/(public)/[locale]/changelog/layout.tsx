@@ -3,6 +3,8 @@ import { Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations } from "next-intl/server";
 
+export const runtime = 'edge';
+
 type Props = {
   children: ReactNode;
   params: { locale: string };

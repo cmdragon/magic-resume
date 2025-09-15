@@ -3,6 +3,8 @@ import { Metadata } from "next";
 import "./globals.css";
 import "./font.css";
 
+export const runtime = 'edge';
+
 type Props = {
   children: ReactNode;
 };

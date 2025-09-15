@@ -6,6 +6,8 @@ import Document from "@/components/Document";
 import { Providers } from "@/app/providers";
 import { Toaster } from "@/components/ui/sonner";
 
+export const runtime = 'edge';
+
 type Props = {
   children: ReactNode;
   params: {

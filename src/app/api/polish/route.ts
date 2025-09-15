@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { AIModelType } from "@/store/useAIConfigStore";
 import { AI_MODEL_CONFIGS } from "@/config/ai";
 
+export const runtime = 'edge';
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();
