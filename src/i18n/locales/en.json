@@ -157,6 +157,14 @@
           "apiKey": "OpenAI API Key",
           "modelId": "Model ID",
           "apiEndpoint": "API Endpoint, example: https://openai.example.org/v1"
+        },
+        "custom": {
+          "title": "Custom Provider",
+          "description": "Configure custom AI provider compatible with OpenAI format (e.g., OpenRouter)",
+          "apiKey": "API Key",
+          "modelId": "Model ID",
+          "apiEndpoint": "API Endpoint",
+          "providerName": "Provider Name (e.g., OpenRouter, Together AI, etc.)"
         }
       }
     },

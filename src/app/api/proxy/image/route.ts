@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 
+// Force dynamic rendering for this route
+export const dynamic = 'force-dynamic';
+
 // resolve image proxy
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
+    const { searchParams } = request.nextUrl;
     const imageUrl = searchParams.get("url");
 
     if (!imageUrl) {

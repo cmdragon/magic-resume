@@ -79,7 +79,7 @@ export function SidePanel() {
   const {
     menuSections = [],
     globalSettings = {},
-    activeSection,
+    activeSection = "",
   } = activeResume || {};
 
   const { themeColor = THEME_COLORS[0] } = globalSettings;
@@ -102,7 +102,7 @@ export function SidePanel() {
       debounce((value) => {
         setThemeColor(value);
       }, 100),
-    []
+    [setThemeColor]
   );
 
   const generateCustomSectionId = (menuSections: any[]) => {
@@ -140,7 +140,7 @@ export function SidePanel() {
         <SettingCard icon={Layout} title={t("layout.title")}>
           <LayoutSetting
             menuSections={menuSections}
-            activeSection={activeSection}
+            activeSection={activeSection ?? ""}
             setActiveSection={setActiveSection}
             toggleSectionVisibility={toggleSectionVisibility}
             updateMenuSections={updateMenuSections}
@@ -205,7 +205,7 @@ export function SidePanel() {
               </div>
               <motion.input
                 type="color"
-                value={themeColor}
+                value={themeColor ?? THEME_COLORS[0]}
                 onChange={(e) => debouncedSetColor(e.target.value)}
                 className="w-[40px] h-[40px] rounded-lg cursor-pointer overflow-hidden hover:scale-105 transition-transform"
               />

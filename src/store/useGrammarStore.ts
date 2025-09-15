@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { toast } from "sonner";
+// @ts-ignore
 import Mark from "mark.js";
 import { useAIConfigStore } from "@/store/useAIConfigStore";
 import { AI_MODEL_CONFIGS } from "@/config/ai";
@@ -47,13 +48,34 @@ export const useGrammarStore = create<GrammarStore>((set, get) => ({
       deepseekApiKey,
       deepseekModelId,
       openaiApiKey,
-      openaiModelId
+      openaiModelId,
+      openaiApiEndpoint,
+      customApiKey,
+      customModelId,
+      customApiEndpoint
     } = useAIConfigStore.getState();
 
     const config = AI_MODEL_CONFIGS[selectedModel];
-    const apiKey = selectedModel === "doubao" ? doubaoApiKey : selectedModel === "openai" ? openaiApiKey : deepseekApiKey;
+    const apiKey = selectedModel === "doubao" 
+      ? doubaoApiKey 
+      : selectedModel === "openai" 
+      ? openaiApiKey 
+      : selectedModel === "custom"
+      ? customApiKey
+      : deepseekApiKey;
     const modelId =
-      selectedModel === "doubao" ? doubaoModelId : selectedModel === "openai" ? openaiModelId : deepseekModelId;
+      selectedModel === "doubao" 
+        ? doubaoModelId 
+        : selectedModel === "openai" 
+        ? openaiModelId 
+        : selectedModel === "custom"
+        ? customModelId
+        : deepseekModelId;
+    const endpoint = selectedModel === "openai" 
+      ? openaiApiEndpoint 
+      : selectedModel === "custom"
+      ? customApiEndpoint
+      : undefined;
 
     set({ isChecking: true });
 
@@ -68,6 +90,7 @@ export const useGrammarStore = create<GrammarStore>((set, get) => ({
           apiKey,
           model: config.requiresModelId ? modelId : config.defaultModel,
           modelType: selectedModel,
+          apiEndpoint: endpoint,
         }),
       });
 

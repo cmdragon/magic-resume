@@ -1,6 +1,7 @@
 "use client";
 import { Layout, PanelsLeftBottom } from "lucide-react";
 import { motion } from "framer-motion";
+import NextImage from "next/image";
 import { useTranslations } from "next-intl";
 import {
   Sheet,
@@ -57,9 +58,11 @@ const TemplateSheet = () => {
                   : "dark:border-neutral-800 dark:hover:border-neutral-700 border-gray-100 hover:border-gray-200"
               )}
             >
-              <img
+              <NextImage
                 src={templateImages[t.id].src}
-                alt={t.name}
+                alt={`${t.name} template preview`}
+                width={200}
+                height={150}
                 className="w-full h-auto"
               />
               {t.id === currentTemplate.id && (

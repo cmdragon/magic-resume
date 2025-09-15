@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState, useRef } from "react";
+import React, { useEffect, useMemo, useState, useRef, useCallback } from "react";
 import { throttle } from "lodash";
 import { DEFAULT_TEMPLATES } from "@/config";
 import { cn } from "@/lib/utils";
@@ -69,7 +69,7 @@ const PreviewPanel = ({
   const resumeContentRef = useRef<HTMLDivElement>(null);
   const [contentHeight, setContentHeight] = useState(0);
 
-  const updateContentHeight = () => {
+  const updateContentHeight = useCallback(() => {
     if (resumeContentRef.current) {
       const height = resumeContentRef.current.clientHeight;
       if (height > 0) {
@@ -78,7 +78,7 @@ const PreviewPanel = ({
         }
       }
     }
-  };
+  }, [contentHeight]);
 
   useEffect(() => {
     const debouncedUpdate = throttle(() => {
@@ -110,14 +110,14 @@ const PreviewPanel = ({
       observer.disconnect();
       resizeObserver.disconnect();
     };
-  }, []);
+  }, [updateContentHeight]);
 
   useEffect(() => {
     if (activeResume) {
       const timer = setTimeout(updateContentHeight, 300);
       return () => clearTimeout(timer);
     }
-  }, [activeResume]);
+  }, [activeResume, updateContentHeight]);
 
   const { pageHeightPx, pageBreakCount } = useMemo(() => {
     const MM_TO_PX = 3.78;

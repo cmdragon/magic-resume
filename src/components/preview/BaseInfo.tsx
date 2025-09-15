@@ -1,6 +1,7 @@
 import React from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { motion } from "framer-motion";
+import NextImage from "next/image";
 import * as Icons from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -73,7 +74,7 @@ const BaseInfo = ({
         custom: field.custom,
       }))
       .filter((item) => Boolean(item.value));
-  }, [basic]);
+  }, [basic, locale]);
 
   const allFields = [
     ...getOrderedFields,
@@ -129,9 +130,11 @@ const BaseInfo = ({
           overflow: "hidden",
         }}
       >
-        <img
+        <NextImage
           src={basic.photo}
           alt={`${basic.name}'s photo`}
+          width={basic.photoConfig?.width || 100}
+          height={basic.photoConfig?.height || 100}
           className="w-full h-full object-cover"
         />
       </div>

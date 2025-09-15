@@ -1,0 +1,150 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+# 设置权限
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    # 添加环境变量
+    env:
+      NODE_ENV: production
+    
+    steps:
+      # 检出代码
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 获取完整历史记录以支持分支操作
+      
+      # 设置Node.js环境
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      
+      # 设置pnpm
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.3.0
+          run_install: false
+      
+      # 获取pnpm store目录
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+      
+      # 缓存pnpm依赖
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      # 安装依赖
+      - name: Install Dependencies
+        run: |
+          echo "正在安装pnpm依赖..."
+          pnpm install --frozen-lockfile
+          echo "依赖安装完成"
+          pnpm list --depth=0
+        
+      # 构建Next.js项目
+      - name: Build Next.js Application
+        run: |
+          echo "正在构建Next.js应用..."
+          pnpm run build
+          echo "Next.js应用构建完成"
+          ls -la .next/
+          # 检查构建输出
+          echo "构建产物统计:"
+          du -sh .next/
+      
+      # 获取当前日期
+      - name: Get current date
+        id: date
+        run: echo "date=$(date +'%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_OUTPUT
+          
+      # 打包构建产物
+      - name: Package Build Artifacts
+        run: |
+          echo "打包构建产物..."
+          # 创建发布目录
+          mkdir -p release
+          # 检查是否有standalone输出
+          if [ -d ".next/standalone" ]; then
+            echo "✅ 发现standalone输出，打包自包含应用"
+            tar -czf release/magic-resume-build.tar.gz .next/standalone/ .next/static/ public/ package.json pnpm-lock.yaml
+            echo "📦 自包含模式：无需安装依赖，直接运行 node server.js"
+          else
+            echo "⚠️ 未发现standalone输出，打包完整构建目录"
+            tar -czf release/magic-resume-build.tar.gz .next/ public/ package.json pnpm-lock.yaml
+            echo "📦 标准模式：需要先 pnpm install --prod (注意使用pnpm而非npm)"
+          fi
+          
+          # 创建部署信息文件
+          echo "构建时间: $(date)" > release/build-info.txt
+          echo "提交哈希: ${{ github.sha }}" >> release/build-info.txt
+          echo "分支: ${{ github.ref_name }}" >> release/build-info.txt
+          echo "应用类型: SSR Next.js Application" >> release/build-info.txt
+          echo "特殊依赖: puppeteer, chromium, sharp (需要运行时安装)" >> release/build-info.txt
+          echo "包管理器: pnpm (请使用 pnpm 而非 npm)" >> release/build-info.txt
+          
+          # 显示打包结果
+          echo "📦 打包完成:"
+          ls -lh release/
+          echo "📊 文件大小:"
+          du -h release/*
+      
+      # 发布到 GitHub Releases
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        if: github.ref == 'refs/heads/main'
+        with:
+          tag_name: build-${{ github.run_number }}-${{ github.sha }}
+          name: 构建版本 ${{ github.run_number }}
+          body: |
+            🚀 **自动构建发布**
+            
+            - **构建时间**: ${{ steps.date.outputs.date }}
+            - **提交哈希**: ${{ github.sha }}
+            - **分支**: ${{ github.ref_name }}
+            
+            ## 📦 包含文件
+            - `magic-resume-build.tar.gz` - 构建产物压缩包
+            - `build-info.txt` - 构建信息文件
+            
+            ## 🚀 部署说明
+            
+            ### 部署方式自动检测：
+            - **如果包含 `standalone`**: 直接运行 `node server.js`，无需安装依赖
+            - **如果不包含**: 需要先 `pnpm install --prod` 再 `pnpm start`
+            
+            ⚠️ **重要提醒**: 请使用 `pnpm` 而非 `npm`，项目使用 pnpm-lock.yaml
+            
+            > ⚠️ **注意**: 本应用使用 puppeteer/chromium 进行 PDF 生成，通常需要安装依赖才能正常工作
+            
+          files: |
+            release/magic-resume-build.tar.gz
+            release/build-info.txt
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+

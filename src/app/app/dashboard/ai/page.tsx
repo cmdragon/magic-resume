@@ -16,6 +16,7 @@ import {
 import { useAIConfigStore } from "@/store/useAIConfigStore";
 import { cn } from "@/lib/utils";
 import IconOpenAi from "@/components/ai/icon/IconOpenAi";
+import IconOpenRouter from "@/components/ai/icon/IconOpenRouter";
 
 const AISettingsPage = () => {
   const {
@@ -25,12 +26,20 @@ const AISettingsPage = () => {
     openaiApiKey,
     openaiModelId,
     openaiApiEndpoint,
+    customApiKey,
+    customModelId,
+    customApiEndpoint,
+    customProviderName,
     setDoubaoApiKey,
     setDoubaoModelId,
     setDeepseekApiKey,
     setOpenaiApiKey,
     setOpenaiModelId,
     setOpenaiApiEndpoint,
+    setCustomApiKey,
+    setCustomModelId,
+    setCustomApiEndpoint,
+    setCustomProviderName,
     selectedModel,
     setSelectedModel
   } = useAIConfigStore();
@@ -45,38 +54,50 @@ const AISettingsPage = () => {
 
   const handleApiKeyChange = async (
     e: React.ChangeEvent<HTMLInputElement>,
-    type: "doubao" | "deepseek" | "openai"
+    type: "doubao" | "deepseek" | "openai" | "custom"
   ) => {
     const newApiKey = e.target.value;
     if (type === "doubao") {
       setDoubaoApiKey(newApiKey);
     } else if (type === "deepseek") {
       setDeepseekApiKey(newApiKey);
-    } else {
+    } else if (type === "openai") {
       setOpenaiApiKey(newApiKey);
+    } else {
+      setCustomApiKey(newApiKey);
     }
   };
 
   const handleModelIdChange = async (
     e: React.ChangeEvent<HTMLInputElement>,
-    type: "doubao" | "deepseek" | "openai"
+    type: "doubao" | "deepseek" | "openai" | "custom"
   ) => {
     const newModelId = e.target.value;
     if (type === "doubao") {
       setDoubaoModelId(newModelId);
     } else if (type === "openai") {
       setOpenaiModelId(newModelId);
+    } else if (type === "custom") {
+      setCustomModelId(newModelId);
     }
   };
 
   const handleApiEndpointChange = async (
     e: React.ChangeEvent<HTMLInputElement>,
-    type: "openai"
+    type: "openai" | "custom"
   ) => {
     const newApiEndpoint = e.target.value;
     if (type === "openai") {
       setOpenaiApiEndpoint(newApiEndpoint);
+    } else {
+      setCustomApiEndpoint(newApiEndpoint);
     }
+  };
+
+  const handleProviderNameChange = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setCustomProviderName(e.target.value);
   };
 
   const models = [
@@ -109,6 +130,16 @@ const AISettingsPage = () => {
       color: "text-blue-500",
       bgColor: "bg-blue-50 dark:bg-blue-950/50",
       isConfigured: !!(openaiApiKey && openaiModelId && openaiApiEndpoint)
+    },
+    {
+      id: "custom",
+      name: customProviderName || t("dashboard.settings.ai.custom.title"),
+      description: t("dashboard.settings.ai.custom.description"),
+      icon: IconOpenRouter,
+      link: "https://openrouter.ai",
+      color: "text-green-500",
+      bgColor: "bg-green-50 dark:bg-green-950/50",
+      isConfigured: !!(customApiKey && customModelId && customApiEndpoint)
     }
   ];
 
@@ -220,12 +251,18 @@ const AISettingsPage = () => {
                       </div>
                       <Input
                         value={
-                          model.id === "doubao" ? doubaoApiKey : model.id === "openai" ? openaiApiKey : deepseekApiKey
+                          model.id === "doubao" 
+                            ? doubaoApiKey 
+                            : model.id === "openai" 
+                            ? openaiApiKey 
+                            : model.id === "custom"
+                            ? customApiKey
+                            : deepseekApiKey
                         }
                         onChange={(e) =>
                           handleApiKeyChange(
                             e,
-                            model.id as "doubao" | "deepseek" | "openai"
+                            model.id as "doubao" | "deepseek" | "openai" | "custom"
                           )
                         }
                         type="password"
@@ -302,6 +339,63 @@ const AISettingsPage = () => {
                           )}
                         />
                       </div>
+                    )}
+
+                    {currentModel === "custom" && (
+                      <>
+                        <div className="space-y-4">
+                          <Label className="text-base font-medium">
+                            {t("dashboard.settings.ai.custom.providerName")}
+                          </Label>
+                          <Input
+                            value={customProviderName}
+                            onChange={handleProviderNameChange}
+                            placeholder={t(
+                              "dashboard.settings.ai.custom.providerName"
+                            )}
+                            className={cn(
+                              "h-11",
+                              "bg-white dark:bg-gray-900",
+                              "border-gray-200 dark:border-gray-800",
+                              "focus:ring-2 focus:ring-primary/20"
+                            )}
+                          />
+                        </div>
+                        
+                        <div className="space-y-4">
+                          <Label className="text-base font-medium">
+                            {t("dashboard.settings.ai.custom.apiEndpoint")}
+                          </Label>
+                          <Input
+                            value={customApiEndpoint}
+                            onChange={(e) => handleApiEndpointChange(e, "custom")}
+                            placeholder="https://openrouter.ai/api/v1"
+                            className={cn(
+                              "h-11",
+                              "bg-white dark:bg-gray-900",
+                              "border-gray-200 dark:border-gray-800",
+                              "focus:ring-2 focus:ring-primary/20"
+                            )}
+                          />
+                        </div>
+                        
+                        <div className="space-y-4">
+                          <Label className="text-base font-medium">
+                            {t("dashboard.settings.ai.custom.modelId")}
+                          </Label>
+                          <Input
+                            value={customModelId}
+                            onChange={(e) => handleModelIdChange(e, "custom")}
+                            placeholder="gpt-3.5-turbo"
+                            className={cn(
+                              "h-11",
+                              "bg-white dark:bg-gray-900",
+                              "border-gray-200 dark:border-gray-800",
+                              "focus:ring-2 focus:ring-primary/20"
+                            )}
+                          />
+                        </div>
+                      </>
                     )}
                   </div>
                 </div>

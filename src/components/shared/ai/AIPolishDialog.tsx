@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { Loader2, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
@@ -42,11 +42,14 @@ export default function AIPolishDialog({
     openaiApiKey,
     openaiModelId,
     openaiApiEndpoint,
+    customApiKey,
+    customModelId,
+    customApiEndpoint,
   } = useAIConfigStore();
   const abortControllerRef = useRef<AbortController | null>(null);
   const polishedContentRef = useRef<HTMLDivElement>(null);
 
-  const handlePolish = async () => {
+  const handlePolish = useCallback(async () => {
     try {
       const config = AI_MODEL_CONFIGS[selectedModel];
       const isConfigured =
@@ -54,6 +57,8 @@ export default function AIPolishDialog({
               ? doubaoApiKey && doubaoModelId
               : selectedModel === "openai"
                   ? openaiApiKey && openaiModelId && openaiApiEndpoint
+                  : selectedModel === "custom"
+                      ? customApiKey && customModelId && customApiEndpoint
                   : config.requiresModelId
                       ? deepseekApiKey && deepseekModelId
                       : deepseekApiKey;
@@ -76,12 +81,25 @@ export default function AIPolishDialog({
         },
         body: JSON.stringify({
           content,
-          apiKey: selectedModel === "doubao" ? doubaoApiKey : selectedModel === "openai" ? openaiApiKey : deepseekApiKey,
-          apiEndpoint: selectedModel === "openai" ? openaiApiEndpoint : undefined,
+          apiKey: selectedModel === "doubao" 
+            ? doubaoApiKey 
+            : selectedModel === "openai" 
+            ? openaiApiKey 
+            : selectedModel === "custom"
+            ? customApiKey
+            : deepseekApiKey,
+          apiEndpoint: selectedModel === "openai" 
+            ? openaiApiEndpoint 
+            : selectedModel === "custom"
+            ? customApiEndpoint
+            : undefined,
           model:
               selectedModel === "doubao"
                   ? doubaoModelId
-                  : selectedModel === "openai" ? openaiModelId
+                  : selectedModel === "openai" 
+                  ? openaiModelId
+                  : selectedModel === "custom"
+                  ? customModelId
                       : config.requiresModelId ? deepseekModelId : deepseekApiKey,
           modelType: selectedModel
         }),
@@ -126,7 +144,22 @@ export default function AIPolishDialog({
     } finally {
       setIsPolishing(false);
     }
-  };
+  }, [
+    content,
+    selectedModel,
+    doubaoApiKey,
+    doubaoModelId,
+    openaiApiKey,
+    openaiModelId,
+    openaiApiEndpoint,
+    customApiKey,
+    customModelId,
+    customApiEndpoint,
+    deepseekApiKey,
+    deepseekModelId,
+    t,
+    onOpenChange
+  ]);
 
   useEffect(() => {
     if (open) {
@@ -138,7 +171,7 @@ export default function AIPolishDialog({
       }
       setPolishedContent("");
     }
-  }, [open]);
+  }, [open, handlePolish]);
 
   const handleClose = () => {
     if (abortControllerRef.current) {

@@ -158,6 +158,14 @@
           "apiKey": "API Key",
           "modelId": "模型 ID",
           "apiEndpoint": "API 端点，如：https://openai.example.org/v1"
+        },
+        "custom": {
+          "title": "自定义提供商",
+          "description": "配置兼容 OpenAI 格式的自定义 AI 提供商（如 OpenRouter）",
+          "apiKey": "API Key",
+          "modelId": "模型 ID",
+          "apiEndpoint": "API 端点",
+          "providerName": "提供商名称（如：OpenRouter、Together AI等）"
         }
       }
     },

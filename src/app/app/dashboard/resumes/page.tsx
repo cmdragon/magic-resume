@@ -52,7 +52,8 @@ const ResumeWorkbench = () => {
         for await (const entry of dirHandle.values()) {
           if (entry.kind === "file" && entry.name.endsWith(".json")) {
             try {
-              const file = await entry.getFile();
+              const fileHandle = entry as FileSystemFileHandle;
+              const file = await fileHandle.getFile();
               const content = await file.text();
               const resumeData = JSON.parse(content);
               updateResumeFromFile(resumeData);
@@ -69,7 +70,7 @@ const ResumeWorkbench = () => {
     if (Object.keys(resumes).length === 0) {
       syncResumesFromFiles();
     }
-  }, [resumes, updateResume]);
+  }, [resumes, updateResume, updateResumeFromFile]);
 
   useEffect(() => {
     const loadSavedConfig = async () => {

@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
-import { Settings2, Image, EyeOff, Eye } from "lucide-react";
+import { Settings2, Image as ImageIcon, EyeOff, Eye } from "lucide-react";
+import NextImage from "next/image";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import PhotoConfigDrawer from "./PhotoConfigDrawer";
@@ -39,7 +40,7 @@ const PhotoSelector: React.FC<Props> = ({ className }) => {
     <div className={cn("relative", className)}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Image className="w-4 h-4" />
+          <ImageIcon className="w-4 h-4" />
           <span className="text-sm font-medium">{t("basicPanel.avatar")}</span>
         </div>
         <div className="flex gap-4">
@@ -76,9 +77,11 @@ const PhotoSelector: React.FC<Props> = ({ className }) => {
 
       <div className="mt-2 relative overflow-hidden">
         {basic.photo && (
-          <img
+          <NextImage
             src={basic.photo}
-            alt="Selected"
+            alt="Selected profile photo"
+            width={48}
+            height={48}
             className="w-[48px] h-[48px] object-cover rounded"
           />
         )}

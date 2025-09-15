@@ -52,7 +52,10 @@ const Field = ({
     deepseekModelId,
     openaiApiKey,
     openaiModelId,
-    openaiApiEndpoint
+    openaiApiEndpoint,
+    customApiKey,
+    customModelId,
+    customApiEndpoint
   } = useAIConfigStore();
   const t = useTranslations();
 
@@ -260,6 +263,8 @@ const Field = ({
                       ? doubaoApiKey && doubaoModelId
                       : selectedModel === "openai"
                           ? openaiApiKey && openaiModelId && openaiApiEndpoint
+                          : selectedModel === "custom"
+                              ? customApiKey && customModelId && customApiEndpoint
                           : config.requiresModelId
                               ? deepseekApiKey && deepseekModelId
                               : deepseekApiKey;

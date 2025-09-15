@@ -79,7 +79,10 @@ const PreviewDock = ({
     deepseekModelId,
     openaiApiKey,
     openaiModelId,
-    openaiApiEndpoint
+    openaiApiEndpoint,
+    customApiKey,
+    customModelId,
+    customApiEndpoint
   } = useAIConfigStore();
 
   const { duplicateResume, activeResumeId, activeResume } = useResumeStore();
@@ -377,6 +380,8 @@ const PreviewDock = ({
         ? doubaoApiKey && doubaoModelId
         : selectedModel === "openai"
         ? openaiApiKey && openaiModelId && openaiApiEndpoint
+        : selectedModel === "custom"
+        ? customApiKey && customModelId && customApiEndpoint
         : config.requiresModelId
         ? deepseekApiKey && deepseekModelId
         : deepseekApiKey;
@@ -412,6 +417,9 @@ const PreviewDock = ({
     openaiApiKey,
     openaiModelId,
     openaiApiEndpoint,
+    customApiKey,
+    customModelId,
+    customApiEndpoint,
     checkGrammar,
     t,
     router

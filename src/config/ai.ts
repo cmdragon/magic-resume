@@ -32,5 +32,13 @@ export const AI_MODEL_CONFIGS: Record<AIModelType, AIModelConfig> = {
       "Content-Type": "application/json",
       Authorization: `Bearer ${apiKey}`,
     }),
+  },
+  custom: {
+    url: (endpoint: string) => `${endpoint}/chat/completions`,
+    requiresModelId: true,
+    headers: (apiKey: string) => ({
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    }),
   }
 };

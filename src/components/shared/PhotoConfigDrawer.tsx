@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
+import NextImage from "next/image";
 import { Upload, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
@@ -87,7 +88,7 @@ const PhotoConfigDrawer: React.FC<Props> = ({
     return () => {
       document.removeEventListener("mousedown", handleClick);
     };
-  }, [isOpen, initialConfig, photo]);
+  }, [isOpen, initialConfig, photo, onClose]);
 
 
 
@@ -353,9 +354,11 @@ const PhotoConfigDrawer: React.FC<Props> = ({
           >
             {previewUrl && previewUrl !== "" ? (
               <div className="relative h-full group">
-                <img
+                <NextImage
                   src={previewUrl}
                   alt="Profile"
+                  width={config.width || 100}
+                  height={config.height || 100}
                   className="w-full h-full object-cover"
                 />
                 <div

@@ -8,6 +8,8 @@ const ScrollToTop = () => {
   const sentinelRef = useRef(null);
 
   useEffect(() => {
+    const currentSentinel = sentinelRef.current;
+    
     // 创建观察器实例
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -22,14 +24,14 @@ const ScrollToTop = () => {
     );
 
     // 开始观察哨兵元素
-    if (sentinelRef.current) {
-      observer.observe(sentinelRef.current);
+    if (currentSentinel) {
+      observer.observe(currentSentinel);
     }
 
     // 清理观察器
     return () => {
-      if (sentinelRef.current) {
-        observer.unobserve(sentinelRef.current);
+      if (currentSentinel) {
+        observer.unobserve(currentSentinel);
       }
     };
   }, []);
