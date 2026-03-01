@@ -108,7 +108,7 @@ export const GITHUB_REPO_URL = "https://github.com/cmdragon/magic-resume";
 
 export const PDF_EXPORT_CONFIG = {
   SERVER_URL:
-    "https://1255612844-0z3iovadu8.ap-chengdu.tencentscf.com/generate-pdf",
+    "https://api.magicv.art/generate-pdf",
   TIMEOUT: 30000, // 30秒超时
   MAX_RETRY: 3 // 最大重试次数
 } as const;
