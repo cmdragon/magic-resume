@@ -12,7 +12,7 @@ type Props = {
 export const metadata: Metadata = {
   metadataBase: new URL("https://magic-resume.cmdragon.cn"),
   description:
-    "Create professional resumes with AI-powered tools. Build, customize, and export your resume in minutes with Magic Resume.",
+    "Create professional resumes with AI-powered tools. Build, customize, and export your resume in minutes with Magic Resume. Supports popular AI service providers and custom AI service configurations.",
   robots: {
     index: true,
     follow: true,

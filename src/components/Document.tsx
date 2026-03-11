@@ -1,5 +1,7 @@
 import { Inter } from "next/font/google";
 import { ReactNode } from "react";
+import PromoBanner from "@/components/shared/PromoBanner";
+import WechatPopup from "@/components/shared/WechatPopup";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -21,7 +23,11 @@ export default function Document({ children, locale, bodyClassName }: Props) {
           crossOrigin="anonymous"
         />
       </head>
-      <body className={bodyClassName}>{children}</body>
+      <body className={bodyClassName}>
+        <PromoBanner />
+        <WechatPopup />
+        {children}
+      </body>
     </html>
   );
 }
