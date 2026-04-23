@@ -175,19 +175,31 @@
       "switchTemplate": "Switch Template",
       "classic": {
         "name": "Classic",
-        "description": "Traditional and minimalist layout, suitable for most job applications"
-      },
-      "modern": {
-        "name": "Two Column",
-        "description": "Classic two-column layout, highlighting personal characteristics"
+        "description": "Traditional single-column centered layout with top-to-bottom flow, suitable for most job applications"
       },
       "leftRight": {
-        "name": "Section Title Background",
-        "description": "Distinctive section titles with background color"
+        "name": "Left-Right Split",
+        "description": "Left 35% sidebar for personal info and skills, right 65% for work experience and education"
       },
       "timeline": {
-        "name": "Timeline Layout",
-        "description": "Timeline style, emphasizing chronological order of experiences"
+        "name": "Timeline Style",
+        "description": "Left-side decorative dots and vertical lines, emphasizing chronological order"
+      },
+      "minimal": {
+        "name": "Minimal",
+        "description": "700px centered narrow layout with generous whitespace, ideal for A4 printing"
+      },
+      "professional": {
+        "name": "Professional",
+        "description": "Solid color header section with white content area, clean and professional for formal occasions"
+      },
+      "creative": {
+        "name": "Creative",
+        "description": "Gradient color header section with white content area, more artistic and vibrant"
+      },
+      "compact": {
+        "name": "Compact",
+        "description": "12px small font with tight spacing, fits more content on a single page, ideal for experienced professionals"
       }
     }
   },
@@ -196,6 +208,9 @@
       "export": "Export",
       "exportPdf": "Export PDF (Server)",
       "exportJson": "Export JSON Config",
+      "exportHtml": "Export HTML",
+      "exportMarkdown": "Export Markdown",
+      "exportImage": "Export PNG Image",
       "exporting": "Exporting...",
       "exportingJson": "Exporting...",
       "print": "Browser Print"
@@ -204,7 +219,13 @@
       "success": "PDF exported successfully",
       "error": "PDF export failed",
       "jsonSuccess": "Configuration exported successfully",
-      "jsonError": "Configuration export failed"
+      "jsonError": "Configuration export failed",
+      "htmlSuccess": "HTML exported successfully",
+      "htmlError": "HTML export failed",
+      "markdownSuccess": "Markdown exported successfully",
+      "markdownError": "Markdown export failed",
+      "imageSuccess": "Image exported successfully",
+      "imageError": "Image export failed"
     }
   },
   "previewDock": {
@@ -235,6 +256,9 @@
       "tooltip": "Export Resume",
       "pdf": "Export PDF",
       "json": "Export JSON",
+      "html": "Export HTML",
+      "markdown": "Export Markdown",
+      "image": "Export PNG Image",
       "print": "Print"
     }
   },

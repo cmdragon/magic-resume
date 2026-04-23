@@ -1,24 +1,23 @@
+import React from "react";
 import BaseInfo from "../preview/BaseInfo";
 import ExperienceSection from "../preview/ExperienceSection";
 import EducationSection from "../preview/EducationSection";
 import SkillSection from "../preview/SkillPanel";
 import ProjectSection from "../preview/ProjectSection";
 import CustomSection from "../preview/CustomSection";
-import GithubContribution from "../shared/GithubContribution";
 import { ResumeData } from "@/types/resume";
 import { ResumeTemplate } from "@/types/template";
 
-interface LeftRightTemplateProps {
+interface ProfessionalTemplateProps {
   data: ResumeData;
   template: ResumeTemplate;
 }
 
-const LeftRightTemplate: React.FC<LeftRightTemplateProps> = ({
+const ProfessionalTemplate: React.FC<ProfessionalTemplateProps> = ({
   data,
   template,
 }) => {
   const { colorScheme } = template;
-  const themeColor = data.globalSettings.themeColor || colorScheme.primary;
   const enabledSections = data.menuSections.filter(
     (section) => section.enabled,
   );
@@ -28,20 +27,11 @@ const LeftRightTemplate: React.FC<LeftRightTemplateProps> = ({
     switch (sectionId) {
       case "basic":
         return (
-          <>
-            <BaseInfo
-              basic={data.basic}
-              globalSettings={data.globalSettings}
-              template={template}
-            />
-            {data.basic.githubContributionsVisible && (
-              <GithubContribution
-                className="mt-2"
-                githubKey={data.basic.githubKey}
-                username={data.basic.githubUseName}
-              />
-            )}
-          </>
+          <BaseInfo
+            basic={data.basic}
+            globalSettings={data.globalSettings}
+            template={template}
+          />
         );
       case "experience":
         return (
@@ -90,39 +80,32 @@ const LeftRightTemplate: React.FC<LeftRightTemplateProps> = ({
     }
   };
 
-  const basicSection = sortedSections.find((s) => s.id === "basic");
-  const contentSections = sortedSections.filter((s) => s.id !== "basic");
+  const basicSection = sortedSections.find((section) => section.id === "basic");
+  const otherSections = sortedSections.filter(
+    (section) => section.id !== "basic",
+  );
 
   return (
     <div
-      className="flex w-full"
       style={{
         backgroundColor: colorScheme.background,
         color: colorScheme.text,
-        minHeight: "100%",
       }}
     >
-      <div
-        className="flex-shrink-0"
-        style={{
-          width: "35%",
-          backgroundColor: themeColor,
-          color: "#ffffff",
-          padding: "24px 20px",
-        }}
-      >
-        {basicSection && renderSection(basicSection.id)}
-      </div>
-      <div
-        className="flex-1"
-        style={{
-          backgroundColor: "#ffffff",
-          color: colorScheme.text,
-          padding: "24px 28px",
-        }}
-      >
-        {contentSections.map((section) => (
-          <div key={section.id} style={{ marginBottom: "20px" }}>
+      {basicSection && (
+        <div
+          style={{
+            backgroundColor: data.globalSettings.themeColor,
+            color: "#ffffff",
+            padding: "28px 36px",
+          }}
+        >
+          {renderSection(basicSection.id)}
+        </div>
+      )}
+      <div style={{ padding: "28px 36px" }}>
+        {otherSections.map((section) => (
+          <div key={section.id} style={{ marginBottom: "24px" }}>
             {renderSection(section.id)}
           </div>
         ))}
@@ -131,4 +114,4 @@ const LeftRightTemplate: React.FC<LeftRightTemplateProps> = ({
   );
 };
 
-export default LeftRightTemplate;
+export default ProfessionalTemplate;

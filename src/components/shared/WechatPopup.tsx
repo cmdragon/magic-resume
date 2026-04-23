@@ -10,11 +10,19 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 
+const SUPPRESS_KEY = "wechat-popup-suppressed";
+const SUPPRESS_DURATION = 10 * 60 * 1000;
+
 export default function WechatPopup() {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    // 延迟显示，让页面加载完成后再弹出
+    const suppressedAt = localStorage.getItem(SUPPRESS_KEY);
+    if (suppressedAt) {
+      const elapsed = Date.now() - Number(suppressedAt);
+      if (elapsed < SUPPRESS_DURATION) return;
+    }
+
     const timer = setTimeout(() => {
       setIsOpen(true);
     }, 3000);
@@ -24,10 +32,16 @@ export default function WechatPopup() {
 
   const handleClose = () => {
     setIsOpen(false);
+    localStorage.setItem(SUPPRESS_KEY, String(Date.now()));
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) handleClose();
+      }}
+    >
       <DialogContent className="sm:max-w-md p-6">
         <DialogHeader>
           <DialogTitle className="text-center text-lg font-semibold">

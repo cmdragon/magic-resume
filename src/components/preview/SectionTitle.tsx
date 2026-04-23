@@ -12,7 +12,12 @@ interface SectionTitleProps {
   showTitle?: boolean;
 }
 
-const SectionTitle = ({ type, title, globalSettings, showTitle = true }: SectionTitleProps) => {
+const SectionTitle = ({
+  type,
+  title,
+  globalSettings,
+  showTitle = true,
+}: SectionTitleProps) => {
   const { activeResume } = useResumeStore();
   const { menuSections = [], templateId = "default" } = activeResume || {};
 
@@ -42,25 +47,12 @@ const SectionTitle = ({ type, title, globalSettings, showTitle = true }: Section
       globalSettings?.paragraphSpacing,
       styles.fontSize,
       themeColor,
-    ]
+    ],
   );
 
   const renderTemplateTitle = () => {
     if (!showTitle) return null;
     switch (templateId) {
-      case "modern":
-        return (
-          <h3
-            className={cn("border-b pb-2")}
-            style={{
-              ...baseStyles,
-              borderColor: themeColor,
-            }}
-          >
-            {renderTitle}
-          </h3>
-        );
-
       case "left-right":
         return (
           <div className="relative">

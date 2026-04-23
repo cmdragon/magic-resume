@@ -1,24 +1,25 @@
+import React from "react";
 import BaseInfo from "../preview/BaseInfo";
 import ExperienceSection from "../preview/ExperienceSection";
 import EducationSection from "../preview/EducationSection";
 import SkillSection from "../preview/SkillPanel";
 import ProjectSection from "../preview/ProjectSection";
 import CustomSection from "../preview/CustomSection";
-import GithubContribution from "../shared/GithubContribution";
 import { ResumeData } from "@/types/resume";
 import { ResumeTemplate } from "@/types/template";
 
-interface LeftRightTemplateProps {
+interface CreativeTemplateProps {
   data: ResumeData;
   template: ResumeTemplate;
 }
 
-const LeftRightTemplate: React.FC<LeftRightTemplateProps> = ({
+const CreativeTemplate: React.FC<CreativeTemplateProps> = ({
   data,
   template,
 }) => {
   const { colorScheme } = template;
   const themeColor = data.globalSettings.themeColor || colorScheme.primary;
+  const secondaryColor = colorScheme.secondary;
   const enabledSections = data.menuSections.filter(
     (section) => section.enabled,
   );
@@ -28,20 +29,11 @@ const LeftRightTemplate: React.FC<LeftRightTemplateProps> = ({
     switch (sectionId) {
       case "basic":
         return (
-          <>
-            <BaseInfo
-              basic={data.basic}
-              globalSettings={data.globalSettings}
-              template={template}
-            />
-            {data.basic.githubContributionsVisible && (
-              <GithubContribution
-                className="mt-2"
-                githubKey={data.basic.githubKey}
-                username={data.basic.githubUseName}
-              />
-            )}
-          </>
+          <BaseInfo
+            basic={data.basic}
+            globalSettings={data.globalSettings}
+            template={template}
+          />
         );
       case "experience":
         return (
@@ -95,40 +87,42 @@ const LeftRightTemplate: React.FC<LeftRightTemplateProps> = ({
 
   return (
     <div
-      className="flex w-full"
       style={{
-        backgroundColor: colorScheme.background,
+        backgroundColor: "#f8f9fa",
         color: colorScheme.text,
-        minHeight: "100%",
+        padding: "16px 20px",
       }}
     >
-      <div
-        className="flex-shrink-0"
-        style={{
-          width: "35%",
-          backgroundColor: themeColor,
-          color: "#ffffff",
-          padding: "24px 20px",
-        }}
-      >
-        {basicSection && renderSection(basicSection.id)}
-      </div>
-      <div
-        className="flex-1"
-        style={{
-          backgroundColor: "#ffffff",
-          color: colorScheme.text,
-          padding: "24px 28px",
-        }}
-      >
-        {contentSections.map((section) => (
-          <div key={section.id} style={{ marginBottom: "20px" }}>
-            {renderSection(section.id)}
-          </div>
-        ))}
-      </div>
+      {basicSection && (
+        <div
+          style={{
+            background: `linear-gradient(135deg, ${themeColor} 0%, ${secondaryColor} 100%)`,
+            borderRadius: "16px",
+            padding: "28px 32px",
+            color: "#ffffff",
+            marginBottom: "20px",
+            boxShadow: `0 8px 24px ${themeColor}33`,
+          }}
+        >
+          {renderSection(basicSection.id)}
+        </div>
+      )}
+      {contentSections.map((section) => (
+        <div
+          key={section.id}
+          style={{
+            backgroundColor: "#ffffff",
+            borderRadius: "12px",
+            padding: "24px 28px",
+            marginBottom: "16px",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+          }}
+        >
+          {renderSection(section.id)}
+        </div>
+      ))}
     </div>
   );
 };
 
-export default LeftRightTemplate;
+export default CreativeTemplate;

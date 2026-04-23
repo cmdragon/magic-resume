@@ -176,19 +176,31 @@
       "switchTemplate": "切换模版",
       "classic": {
         "name": "经典模板",
-        "description": "传统简约的简历布局，适合大多数求职场景"
-      },
-      "modern": {
-        "name": "两栏布局",
-        "description": "经典两栏，突出个人特色"
+        "description": "传统单列居中布局，信息从上到下排列，适合大多数求职场景"
       },
       "leftRight": {
-        "name": "模块标题背景色",
-        "description": "模块标题背景鲜明，突出美观特色"
+        "name": "左右分栏",
+        "description": "左侧 35% 栏放个人信息和技能，右侧 65% 展示工作经历和教育背景"
       },
       "timeline": {
-        "name": "时间轴布局",
-        "description": "时间轴风格，突出经历的时间顺序"
+        "name": "时间线风格",
+        "description": "左侧带有圆点装饰线，突出经历的时间顺序感"
+      },
+      "minimal": {
+        "name": "极简模板",
+        "description": "700px 居中窄幅排版，大量留白，适合 A4 打印输出"
+      },
+      "professional": {
+        "name": "商务模板",
+        "description": "纯色头部信息栏 + 白色内容区，简洁专业，适合正式场合"
+      },
+      "creative": {
+        "name": "创意设计",
+        "description": "渐变色头部信息栏 + 白色内容区，更有设计感和活力"
+      },
+      "compact": {
+        "name": "紧凑模板",
+        "description": "12px 小字号 + 小间距，单页容纳更多内容，适合经验丰富者"
       }
     }
   },
@@ -197,6 +209,9 @@
       "export": "导出",
       "exportPdf": "PDF(服务端)",
       "exportJson": "JSON配置",
+      "exportHtml": "HTML文件",
+      "exportMarkdown": "Markdown文件",
+      "exportImage": "PNG图片",
       "exporting": "导出中...",
       "exportingJson": "导出中...",
       "print": "PDF(浏览器打印)"
@@ -205,7 +220,13 @@
       "success": "PDF导出成功",
       "error": "PDF导出失败",
       "jsonSuccess": "配置导出成功",
-      "jsonError": "配置导出失败"
+      "jsonError": "配置导出失败",
+      "htmlSuccess": "HTML导出成功",
+      "htmlError": "HTML导出失败",
+      "markdownSuccess": "Markdown导出成功",
+      "markdownError": "Markdown导出失败",
+      "imageSuccess": "图片导出成功",
+      "imageError": "图片导出失败"
     }
   },
   "workbench": {
@@ -614,6 +635,9 @@
       "tooltip": "导出简历",
       "pdf": "导出PDF",
       "json": "导出JSON",
+      "html": "导出HTML",
+      "markdown": "导出Markdown",
+      "image": "导出PNG图片",
       "print": "打印"
     }
   },

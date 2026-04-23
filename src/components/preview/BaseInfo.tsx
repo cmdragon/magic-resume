@@ -37,9 +37,27 @@ const BaseInfo = ({
     return IconComponent ? <IconComponent className="w-4 h-4" /> : null;
   };
 
-  const isModernTemplate = React.useMemo(() => {
-    return template?.layout === "modern";
-  }, [template]);
+  const isModernTemplate =
+    template?.layout === "left-right" ||
+    template?.layout === "professional" ||
+    template?.layout === "creative";
+
+  // 对于左右分栏模板的左侧栏，强制使用纵向居中布局
+  const isLeftRightTemplate = template?.layout === "left-right";
+  const effectiveLayout = isLeftRightTemplate ? "center" : layout;
+
+  const isColoredHeaderTemplate =
+    template?.layout === "professional" || template?.layout === "creative";
+
+  const getContainerClass = () => {
+    if (isLeftRightTemplate) {
+      return cn("cursor-pointer", layoutStyles.container);
+    }
+    if (isColoredHeaderTemplate) {
+      return cn("cursor-pointer", layoutStyles.container);
+    }
+    return cn(baseContainerClass, layoutStyles.container);
+  };
 
   const getOrderedFields = React.useMemo(() => {
     if (!basic.fieldOrder) {
@@ -60,7 +78,7 @@ const BaseInfo = ({
         (field) =>
           field.visible !== false &&
           field.key !== "name" &&
-          field.key !== "title"
+          field.key !== "title",
       )
       .map((field) => ({
         key: field.key,
@@ -92,7 +110,7 @@ const BaseInfo = ({
 
   const getNameField = () => {
     const nameField = basic.fieldOrder?.find(
-      (field) => field.key === "name"
+      (field) => field.key === "name",
     ) || {
       key: "name",
       label: "姓名",
@@ -103,7 +121,7 @@ const BaseInfo = ({
 
   const getTitleField = () => {
     const titleField = basic.fieldOrder?.find(
-      (field) => field.key === "title"
+      (field) => field.key === "title",
     ) || {
       key: "title",
       label: "职位",
@@ -125,9 +143,12 @@ const BaseInfo = ({
             basic.photoConfig || {
               borderRadius: "none",
               customBorderRadius: 0,
-            }
+            },
           ),
           overflow: "hidden",
+          border: isColoredHeaderTemplate
+            ? "3px solid rgba(255,255,255,0.3)"
+            : undefined,
         }}
       >
         <NextImage
@@ -175,7 +196,7 @@ const BaseInfo = ({
 
   // 根据布局选择样式
   const getLayoutStyles = () => {
-    switch (layout) {
+    switch (effectiveLayout) {
       case "right":
         return rightLayoutStyles;
       case "center":
@@ -225,7 +246,7 @@ const BaseInfo = ({
       style={{
         fontSize: `${globalSettings?.baseFontSize || 14}px`,
         color: isModernTemplate ? "#fff" : "rgb(75, 85, 99)",
-        maxWidth: layout === "center" ? "none" : "600px",
+        maxWidth: effectiveLayout === "center" ? "none" : "600px",
       }}
     >
       {allFields.map((item) => (
@@ -264,7 +285,10 @@ const BaseInfo = ({
   );
 
   return (
-    <div className={containerClass} onClick={() => setActiveSection("basic")}>
+    <div
+      className={getContainerClass()}
+      onClick={() => setActiveSection("basic")}
+    >
       <div className={leftContentClass}>
         {PhotoComponent}
         {NameTitleComponent}

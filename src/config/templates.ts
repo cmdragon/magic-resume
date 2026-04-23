@@ -17,14 +17,6 @@ export const templateConfigs: Record<string, TemplateConfig> = {
       },
     },
   },
-  modern: {
-    sectionTitle: {
-      className: "font-semibold mb-2 uppercase tracking-wider",
-      styles: {
-        fontSize: 18,
-      },
-    },
-  },
   "left-right": {
     sectionTitle: {
       className: "pl-1 flex items-center",
@@ -36,6 +28,54 @@ export const templateConfigs: Record<string, TemplateConfig> = {
         borderLeftWidth: "3px",
         borderLeftStyle: "solid",
         borderLeftColor: "var(--theme-color)",
+      },
+    },
+  },
+  minimal: {
+    sectionTitle: {
+      className: "font-medium",
+      styles: {
+        fontSize: 16,
+        borderBottomWidth: "1px",
+        borderBottomStyle: "solid",
+        borderBottomColor: "#e5e7eb",
+        paddingBottom: "4px",
+        marginBottom: "8px",
+      },
+    },
+  },
+  professional: {
+    sectionTitle: {
+      className: "font-bold uppercase tracking-wide",
+      styles: {
+        fontSize: 16,
+        color: "#ffffff",
+        backgroundColor: "var(--theme-color)",
+        padding: "6px 12px",
+        marginBottom: "12px",
+      },
+    },
+  },
+  creative: {
+    sectionTitle: {
+      className: "font-semibold relative",
+      styles: {
+        fontSize: 18,
+        color: "var(--theme-color)",
+        paddingBottom: "8px",
+      },
+    },
+  },
+  compact: {
+    sectionTitle: {
+      className: "font-bold",
+      styles: {
+        fontSize: 14,
+        borderBottomWidth: "1px",
+        borderBottomStyle: "dashed",
+        borderBottomColor: "#d1d5db",
+        paddingBottom: "3px",
+        marginBottom: "6px",
       },
     },
   },

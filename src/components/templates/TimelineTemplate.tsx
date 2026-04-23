@@ -58,6 +58,7 @@ const TimelineTemplate: React.FC<TimelineTemplateProps> = ({
             <BaseInfo
               basic={data.basic}
               globalSettings={data.globalSettings}
+              template={template}
               showTitle={false}
             />
             {data.basic.githubContributionsVisible && (

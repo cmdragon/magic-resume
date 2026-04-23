@@ -11,6 +11,9 @@ import {
   Printer,
   FileJson,
   Loader2,
+  FileText,
+  FileType,
+  ImageIcon,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
@@ -70,6 +73,9 @@ const PreviewDock = ({
   const { checkGrammar, isChecking } = useGrammarCheck();
   const [isExporting, setIsExporting] = useState(false);
   const [isExportingJson, setIsExportingJson] = useState(false);
+  const [isExportingHtml, setIsExportingHtml] = useState(false);
+  const [isExportingMarkdown, setIsExportingMarkdown] = useState(false);
+  const [isExportingImage, setIsExportingImage] = useState(false);
 
   const {
     selectedModel,
@@ -231,6 +237,314 @@ const PreviewDock = ({
       toast.error(tPdf("toast.jsonError"));
     } finally {
       setIsExportingJson(false);
+    }
+  };
+
+  const handleExportHtml = () => {
+    try {
+      setIsExportingHtml(true);
+      const resumeContent = document.getElementById("resume-preview");
+      if (!resumeContent) {
+        throw new Error("Resume content not found");
+      }
+
+      const clone = resumeContent.cloneNode(true) as HTMLElement;
+      const pageBreakLines = clone.querySelectorAll(".page-break-line");
+      pageBreakLines.forEach((line) => {
+        (line as HTMLElement).style.display = "none";
+      });
+
+      const actualContent = clone;
+
+      const styles = Array.from(document.styleSheets)
+        .map((sheet) => {
+          try {
+            return Array.from(sheet.cssRules)
+              .map((rule) => rule.cssText)
+              .join("\n");
+          } catch (e) {
+            return "";
+          }
+        })
+        .join("\n");
+
+      const pagePadding = globalSettings?.pagePadding || 32;
+      const htmlContent = `<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${title}</title>
+<style>
+  @page { size: A4; margin: ${pagePadding}px; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: sans-serif; }
+  ${styles}
+</style>
+</head>
+<body>
+${actualContent.innerHTML}
+</body>
+</html>`;
+
+      const blob = new Blob([htmlContent], { type: "text/html;charset=utf-8" });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${title}.html`;
+      link.click();
+      window.URL.revokeObjectURL(url);
+      toast.success(tPdf("toast.htmlSuccess"));
+    } catch (error) {
+      console.error("HTML export error:", error);
+      toast.error(tPdf("toast.htmlError"));
+    } finally {
+      setIsExportingHtml(false);
+    }
+  };
+
+  const handleExportMarkdown = () => {
+    try {
+      setIsExportingMarkdown(true);
+      if (!activeResume) {
+        throw new Error("No active resume");
+      }
+
+      const {
+        basic,
+        experience,
+        education,
+        projects,
+        skillContent,
+        customData,
+        menuSections,
+      } = activeResume;
+      let md = "";
+
+      // Header - Name
+      if (basic?.name) {
+        md += `# ${basic.name}\n\n`;
+      }
+      // Title
+      if (basic?.title) {
+        md += `**${basic.title}**\n\n`;
+      }
+
+      // Contact info as blockquote
+      const contactInfo: string[] = [];
+      if (basic) {
+        if (basic.employementStatus) contactInfo.push(basic.employementStatus);
+        if (basic.birthDate)
+          contactInfo.push(new Date(basic.birthDate).toLocaleDateString());
+        if (basic.email) contactInfo.push(basic.email);
+        if (basic.phone) contactInfo.push(basic.phone);
+        if (basic.location) contactInfo.push(basic.location);
+        // Check custom fields for personal website
+        basic.customFields?.forEach((field) => {
+          if (field.value && field.visible !== false) {
+            contactInfo.push(field.value);
+          }
+        });
+      }
+      if (contactInfo.length > 0) {
+        md += `> ${contactInfo.join(" | ")}\n\n`;
+      }
+
+      md += `---\n\n`;
+
+      // Sections
+      const enabledSections = menuSections
+        .filter((s) => s.enabled)
+        .sort((a, b) => a.order - b.order);
+
+      enabledSections.forEach((section) => {
+        if (section.id === "basic") return;
+
+        md += `## ${section.title}\n\n`;
+
+        switch (section.id) {
+          case "experience":
+            experience?.forEach((exp) => {
+              const headerParts: string[] = [];
+              if (exp.company) headerParts.push(exp.company);
+              if (exp.position) headerParts.push(exp.position);
+              if (exp.date) {
+                headerParts.push(exp.date);
+              }
+              if (headerParts.length > 0) {
+                md += `**${headerParts.join(" | ")}**\n\n`;
+              }
+              if (exp.details) {
+                const items = exp.details
+                  .split(/<br\s*\/?>|<li>|<\/li>/i)
+                  .filter((item) => item.trim());
+                items.forEach((item) => {
+                  const clean = item.replace(/<\/?[^>]+(>|$)/g, "").trim();
+                  if (clean) md += `- ${clean}\n`;
+                });
+                md += "\n";
+              }
+            });
+            break;
+
+          case "education":
+            education?.forEach((edu) => {
+              const headerParts: string[] = [];
+              if (edu.school) headerParts.push(edu.school);
+              if (edu.major) headerParts.push(edu.major);
+              if (edu.startDate || edu.endDate) {
+                headerParts.push(
+                  `${edu.startDate || ""} - ${edu.endDate || ""}`,
+                );
+              }
+              if (headerParts.length > 0) {
+                md += `**${headerParts.join(" | ")}**\n\n`;
+              }
+              if (edu.description) {
+                const items = edu.description
+                  .split(/<br\s*\/?>|<li>|<\/li>/i)
+                  .filter((item) => item.trim());
+                items.forEach((item) => {
+                  const clean = item.replace(/<\/?[^>]+(>|$)/g, "").trim();
+                  if (clean) md += `- ${clean}\n`;
+                });
+                md += "\n";
+              }
+            });
+            break;
+
+          case "projects":
+            projects?.forEach((project) => {
+              const headerParts: string[] = [];
+              if (project.name) headerParts.push(project.name);
+              if (project.role) headerParts.push(project.role);
+              if (project.date) {
+                headerParts.push(project.date);
+              }
+              if (headerParts.length > 0) {
+                md += `**${headerParts.join(" | ")}**\n\n`;
+              }
+              if (project.description) {
+                const items = project.description
+                  .split(/<br\s*\/?>|<li>|<\/li>/i)
+                  .filter((item) => item.trim());
+                items.forEach((item) => {
+                  const clean = item.replace(/<\/?[^>]+(>|$)/g, "").trim();
+                  if (clean) md += `- ${clean}\n`;
+                });
+                md += "\n";
+              }
+            });
+            break;
+
+          case "skills":
+            if (skillContent) {
+              const skillItems = skillContent
+                .split(/\n|<br\s*\/?>/i)
+                .filter((item) => item.trim());
+              skillItems.forEach((item) => {
+                const clean = item.replace(/<\/?[^>]+(>|$)/g, "").trim();
+                if (clean) {
+                  const colonIdx = clean.indexOf(":");
+                  if (colonIdx > 0 && colonIdx < 20) {
+                    const category = clean.substring(0, colonIdx).trim();
+                    const content = clean.substring(colonIdx + 1).trim();
+                    md += `- **${category}**: ${content}\n`;
+                  } else {
+                    md += `- ${clean}\n`;
+                  }
+                }
+              });
+              md += "\n";
+            }
+            break;
+
+          default:
+            // Custom sections
+            if (section.id in customData) {
+              const items = customData[section.id];
+              items?.forEach((item) => {
+                const headerParts: string[] = [];
+                if (item.title) headerParts.push(item.title);
+                if (item.subtitle) headerParts.push(item.subtitle);
+                if (item.dateRange) headerParts.push(item.dateRange);
+                if (headerParts.length > 0) {
+                  md += `**${headerParts.join(" | ")}**\n\n`;
+                }
+                if (item.description) {
+                  const descItems = item.description
+                    .split(/<br\s*\/?>|<li>|<\/li>/i)
+                    .filter((descItem) => descItem.trim());
+                  descItems.forEach((descItem) => {
+                    const clean = descItem
+                      .replace(/<\/?[^>]+(>|$)/g, "")
+                      .trim();
+                    if (clean) md += `- ${clean}\n`;
+                  });
+                  md += "\n";
+                }
+              });
+            }
+            break;
+        }
+      });
+
+      md = md.replace(/\n{3,}/g, "\n\n").trim();
+
+      const blob = new Blob([md], { type: "text/markdown;charset=utf-8" });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${title}.md`;
+      link.click();
+      window.URL.revokeObjectURL(url);
+      toast.success(tPdf("toast.markdownSuccess"));
+    } catch (error) {
+      console.error("Markdown export error:", error);
+      toast.error(tPdf("toast.markdownError"));
+    } finally {
+      setIsExportingMarkdown(false);
+    }
+  };
+
+  const handleExportImage = async () => {
+    try {
+      setIsExportingImage(true);
+      const resumeContent = document.getElementById("resume-preview");
+      if (!resumeContent) {
+        throw new Error("Resume content not found");
+      }
+
+      if (typeof window === "undefined") return;
+      const { default: html2canvas } = await import("html2canvas");
+
+      const canvas = await html2canvas(resumeContent, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: "#ffffff",
+        logging: false,
+        ignoreElements: (element) =>
+          element.classList.contains("page-break-line"),
+      });
+
+      canvas.toBlob((blob) => {
+        if (!blob) {
+          toast.error(tPdf("toast.imageError"));
+          return;
+        }
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `${title}.png`;
+        link.click();
+        window.URL.revokeObjectURL(url);
+        toast.success(tPdf("toast.imageSuccess"));
+      }, "image/png");
+    } catch (error) {
+      console.error("Image export error:", error);
+      toast.error(tPdf("toast.imageError"));
+    } finally {
+      setIsExportingImage(false);
     }
   };
 
@@ -436,7 +750,12 @@ const PreviewDock = ({
     }
   }, [activeResumeId, duplicateResume, router, t]);
 
-  const isLoading = isExporting || isExportingJson;
+  const isLoading =
+    isExporting ||
+    isExportingJson ||
+    isExportingHtml ||
+    isExportingMarkdown ||
+    isExportingImage;
 
   return (
     <>
@@ -533,6 +852,27 @@ const PreviewDock = ({
                     >
                       <FileJson className="w-4 h-4 mr-2" />
                       {t("export.json")}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={handleExportHtml}
+                      disabled={isLoading}
+                    >
+                      <FileText className="w-4 h-4 mr-2" />
+                      {t("export.html")}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={handleExportMarkdown}
+                      disabled={isLoading}
+                    >
+                      <FileType className="w-4 h-4 mr-2" />
+                      {t("export.markdown")}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={handleExportImage}
+                      disabled={isLoading}
+                    >
+                      <ImageIcon className="w-4 h-4 mr-2" />
+                      {t("export.image")}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
