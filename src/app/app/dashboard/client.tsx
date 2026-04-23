@@ -13,13 +13,13 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarProvider,
-  SidebarTrigger
+  SidebarTrigger,
 } from "@/components/ui/sidebar";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
-  TooltipTrigger
+  TooltipTrigger,
 } from "@/components/ui/tooltip";
 import Logo from "@/components/shared/Logo";
 import { useTranslations } from "next-intl";
@@ -38,30 +38,30 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
     {
       title: t("sidebar.resumes"),
       url: "/app/dashboard/resumes",
-      icon: FileText
+      icon: FileText,
     },
     {
       title: t("sidebar.templates"),
       url: "/app/dashboard/templates",
-      icon: SwatchBook
+      icon: SwatchBook,
     },
     {
       title: t("sidebar.settings"),
       url: "/app/dashboard/settings",
-      icon: Settings
+      icon: Settings,
     },
     {
       title: t("sidebar.ai"),
       url: "/app/dashboard/ai",
-      icon: Bot
-    }
+      icon: Bot,
+    },
   ];
 
   const router = useRouter();
   const pathname = usePathname();
   const [open, setOpen] = useState(true);
   const [collapsible, setCollapsible] = useState<"offcanvas" | "icon" | "none">(
-    "icon"
+    "icon",
   );
 
   useEffect(() => {
@@ -153,6 +153,18 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
+            {open && (
+              <div className="p-4">
+                <ins
+                  className="adsbygoogle"
+                  style={{ display: "block" }}
+                  data-ad-client="ca-pub-2874982874195135"
+                  data-ad-slot="8013345286"
+                  data-ad-format="auto"
+                  data-full-width-responsive="true"
+                ></ins>
+              </div>
+            )}
           </SidebarContent>
           <SidebarFooter />
         </Sidebar>
