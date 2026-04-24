@@ -18,14 +18,17 @@ const SectionTitle = ({
   globalSettings,
   showTitle = true,
 }: SectionTitleProps) => {
-  const { activeResume } = useResumeStore();
-  const { menuSections = [], templateId = "default" } = activeResume || {};
+  const menuSections = useResumeStore(
+    (state) => state.activeResume?.menuSections,
+  );
+  const templateId =
+    useResumeStore((state) => state.activeResume?.templateId) || "default";
 
   const renderTitle = useMemo(() => {
     if (type === "custom") {
       return title;
     }
-    const sectionConfig = menuSections.find((s) => s.id === type);
+    const sectionConfig = (menuSections || []).find((s) => s.id === type);
     return sectionConfig?.title;
   }, [menuSections, type, title]);
 

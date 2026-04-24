@@ -24,6 +24,42 @@ import {
 import Logo from "@/components/shared/Logo";
 import { useTranslations } from "next-intl";
 
+declare global {
+  interface Window {
+    adsbygoogle: any[];
+  }
+}
+
+function AdUnit() {
+  useEffect(() => {
+    const loadAd = () => {
+      if (!window.adsbygoogle) {
+        setTimeout(loadAd, 500);
+        return;
+      }
+      try {
+        window.adsbygoogle.push({});
+      } catch (e) {
+        console.error("AdSense error:", e);
+      }
+    };
+    loadAd();
+  }, []);
+
+  return (
+    <div className="p-4">
+      <ins
+        className="adsbygoogle"
+        style={{ display: "block" }}
+        data-ad-client="ca-pub-2874982874195135"
+        data-ad-slot="8013345286"
+        data-ad-format="auto"
+        data-full-width-responsive="true"
+      />
+    </div>
+  );
+}
+
 interface MenuItem {
   title: string;
   url?: string;
@@ -153,18 +189,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
-            {open && (
-              <div className="p-4">
-                <ins
-                  className="adsbygoogle"
-                  style={{ display: "block" }}
-                  data-ad-client="ca-pub-2874982874195135"
-                  data-ad-slot="8013345286"
-                  data-ad-format="auto"
-                  data-full-width-responsive="true"
-                ></ins>
-              </div>
-            )}
+            {open && <AdUnit />}
           </SidebarContent>
           <SidebarFooter />
         </Sidebar>

@@ -1,9 +1,10 @@
 import { cn } from "@/lib/utils";
 import React, { PropsWithChildren } from "react";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 
-interface DockProps
-  extends PropsWithChildren<React.HTMLAttributes<HTMLDivElement>> {
+interface DockProps extends PropsWithChildren<
+  React.HTMLAttributes<HTMLDivElement>
+> {
   className?: string;
 }
 
@@ -14,17 +15,20 @@ export function Dock({ children, className, ...props }: DockProps) {
   // Find the index of TemplateSheet for splitting
   const templateSheetIndex = childrenArray.findIndex((child) => {
     if (React.isValidElement(child)) {
-      const tooltip = child.props.children;
+      const tooltip = (child as React.ReactElement<any>).props.children;
       if (React.isValidElement(tooltip)) {
-        const trigger = tooltip.props.children.find(
-          (child: any) => child?.type?.name === "TooltipTrigger"
+        const trigger = (
+          tooltip as React.ReactElement<any>
+        ).props.children.find(
+          (item: any) => item?.type?.name === "TooltipTrigger",
         );
         if (trigger) {
-          const content = trigger.props.children;
+          const content = (trigger as React.ReactElement<any>).props.children;
           if (React.isValidElement(content)) {
-            const icon = content.props.children;
+            const icon = (content as React.ReactElement<any>).props.children;
             return (
-              React.isValidElement(icon) && icon.type?.name === "TemplateSheet"
+              React.isValidElement(icon) &&
+              (icon as any).type?.name === "TemplateSheet"
             );
           }
         }
@@ -40,7 +44,7 @@ export function Dock({ children, className, ...props }: DockProps) {
         {...props}
         className={cn(
           "flex flex-col items-center gap-4 rounded-xl bg-white/[0.7] p-2 shadow-lg backdrop-blur-md dark:bg-slate-800/[0.7] dark:shadow-slate-900/20",
-          className
+          className,
         )}
       >
         <div className="flex flex-col items-center gap-4">{children}</div>
@@ -58,7 +62,7 @@ export function Dock({ children, className, ...props }: DockProps) {
       {...props}
       className={cn(
         "flex flex-col items-center gap-4 rounded-xl bg-white/[0.7] p-4 shadow-lg backdrop-blur-md dark:bg-slate-800/[0.7] dark:shadow-slate-900/20",
-        className
+        className,
       )}
     >
       {/* Top group */}
@@ -93,13 +97,18 @@ interface DockIconProps extends PropsWithChildren {
 }
 
 export function DockIcon({ children, className, onClick }: DockIconProps) {
+  const shouldReduceMotion = useReducedMotion();
+
+  const hoverAnimation = shouldReduceMotion ? { scale: 1.05 } : { scale: 1.2 };
+  const tapAnimation = shouldReduceMotion ? { scale: 1 } : { scale: 0.95 };
+
   return (
     <motion.div
-      whileHover={{ scale: 1.2 }}
-      whileTap={{ scale: 0.95 }}
+      whileHover={hoverAnimation}
+      whileTap={tapAnimation}
       className={cn(
         "flex size-8 items-center justify-center rounded-sm bg-white text-neutral-700 shadow-sm transition-colors hover:bg-gray-100 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 dark:shadow-slate-900/20",
-        className
+        className,
       )}
       onClick={onClick}
     >

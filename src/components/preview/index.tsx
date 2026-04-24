@@ -1,6 +1,12 @@
 "use client";
 
-import React, { useEffect, useMemo, useState, useRef, useCallback } from "react";
+import React, {
+  useEffect,
+  useMemo,
+  useState,
+  useRef,
+  useCallback,
+} from "react";
 import { throttle } from "lodash";
 import { DEFAULT_TEMPLATES } from "@/config";
 import { cn } from "@/lib/utils";
@@ -17,7 +23,7 @@ interface PreviewPanelProps {
 }
 
 const PageBreakLine = React.memo(({ pageNumber }: { pageNumber: number }) => {
-  const { activeResume } = useResumeStore();
+  const activeResume = useResumeStore((state) => state.activeResume);
   const { globalSettings } = activeResume || {};
   if (!globalSettings?.pagePadding) return null;
 
@@ -56,13 +62,13 @@ const PreviewPanel = ({
   toggleSidePanel,
   toggleEditPanel,
 }: PreviewPanelProps) => {
-  const { activeResume } = useResumeStore();
+  const activeResume = useResumeStore((state) => state.activeResume);
+  const templateId = useResumeStore((state) => state.activeResume?.templateId);
   const template = useMemo(() => {
     return (
-      DEFAULT_TEMPLATES.find((t) => t.id === activeResume?.templateId) ||
-      DEFAULT_TEMPLATES[0]
+      DEFAULT_TEMPLATES.find((t) => t.id === templateId) || DEFAULT_TEMPLATES[0]
     );
-  }, [activeResume?.templateId]);
+  }, [templateId]);
 
   const startRef = useRef<HTMLDivElement>(null);
   const previewRef = useRef<HTMLDivElement>(null);
@@ -158,7 +164,7 @@ const PreviewPanel = ({
             "w-[210mm] min-w-[210mm] min-h-[297mm]",
             "bg-white",
             "shadow-lg",
-            "relative mx-auto"
+            "relative mx-auto",
           )}
         >
           <div
@@ -228,7 +234,7 @@ const PreviewPanel = ({
                         );
                       }
                       return null;
-                    }
+                    },
                   ).filter(Boolean)}
                 </div>
               </>

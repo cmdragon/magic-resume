@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { X } from "lucide-react";
+import Image from "next/image";
 import {
   Dialog,
   DialogContent,
@@ -11,7 +12,7 @@ import {
 } from "@/components/ui/dialog";
 
 const SUPPRESS_KEY = "wechat-popup-suppressed";
-const SUPPRESS_DURATION = 10 * 60 * 1000;
+const SUPPRESS_DURATION = 1 * 60 * 1000;
 
 export default function WechatPopup() {
   const [isOpen, setIsOpen] = useState(false);
@@ -49,11 +50,13 @@ export default function WechatPopup() {
           </DialogTitle>
         </DialogHeader>
         <div className="flex flex-col items-center space-y-4 mt-4">
-          <div className="w-48 h-48 flex items-center justify-center">
-            <img
+          <div className="w-48 h-48 flex items-center justify-center relative">
+            <Image
               src="/wechat_qrcode.webp"
               alt="微信公众号二维码"
-              className="w-full h-full object-contain"
+              width={192}
+              height={192}
+              className="object-contain"
             />
           </div>
           <div className="text-center">

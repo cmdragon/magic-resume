@@ -4,12 +4,23 @@ import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import dynamic from "next/dynamic";
+import { Skeleton } from "@/components/ui/skeleton";
 
 import { useResumeStore } from "@/store/useResumeStore";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import ResumeTemplateComponent from "@/components/templates";
+const ResumeTemplateComponent = dynamic(
+  () => import("@/components/templates"),
+  {
+    loading: () => (
+      <div className="flex items-center justify-center p-8">
+        <Skeleton className="w-full h-96" />
+      </div>
+    ),
+  },
+);
 import { DEFAULT_TEMPLATES } from "@/config";
 import { initialResumeState } from "@/config/initialResumeData";
 import { ResumeTemplate } from "@/types/template";
@@ -112,6 +123,7 @@ const TemplateCard = ({
               src={templateImages[template.id]}
               alt={t(`${templateKey}.name`)}
               fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               className="object-cover transition-all duration-300 group-hover:scale-[1.02]"
             />
 

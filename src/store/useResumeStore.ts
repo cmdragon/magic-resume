@@ -53,7 +53,7 @@ interface ResumeStore {
   updateCustomItem: (
     sectionId: string,
     itemId: string,
-    updates: Partial<CustomItem>
+    updates: Partial<CustomItem>,
   ) => void;
   removeCustomItem: (sectionId: string, itemId: string) => void;
   updateGlobalSettings: (settings: Partial<GlobalSettings>) => void;
@@ -65,7 +65,7 @@ interface ResumeStore {
 // 同步简历到文件系统
 const syncResumeToFile = async (
   resumeData: ResumeData,
-  prevResume?: ResumeData
+  prevResume?: ResumeData,
 ) => {
   try {
     const handle = await getFileHandle("syncDirectory");
@@ -138,7 +138,7 @@ export const useResumeStore = create(
           templateId: template?.id,
           title: `${locale === "en" ? "New Resume" : "新建简历"} ${id.slice(
             0,
-            6
+            6,
           )}`,
         };
 
@@ -301,10 +301,10 @@ export const useResumeStore = create(
 
         const currentResume = resumes[activeResumeId];
         const newEducation = currentResume.education.some(
-          (e) => e.id === education.id
+          (e) => e.id === education.id,
         )
           ? currentResume.education.map((e) =>
-              e.id === education.id ? education : e
+              e.id === education.id ? education : e,
             )
           : [...currentResume.education, education];
 
@@ -333,10 +333,10 @@ export const useResumeStore = create(
 
         const currentResume = resumes[activeResumeId];
         const newExperience = currentResume.experience.find(
-          (e) => e.id === experience.id
+          (e) => e.id === experience.id,
         )
           ? currentResume.experience.map((e) =>
-              e.id === experience.id ? experience : e
+              e.id === experience.id ? experience : e,
             )
           : [...currentResume.experience, experience];
 
@@ -356,7 +356,7 @@ export const useResumeStore = create(
 
         const currentResume = resumes[activeResumeId];
         const updatedExperience = currentResume.experience.filter(
-          (e) => e.id !== id
+          (e) => e.id !== id,
         );
 
         get().updateResume(activeResumeId, { experience: updatedExperience });
@@ -367,10 +367,10 @@ export const useResumeStore = create(
         if (!activeResumeId) return;
         const currentResume = resumes[activeResumeId];
         const newProjects = currentResume.projects.some(
-          (p) => p.id === project.id
+          (p) => p.id === project.id,
         )
           ? currentResume.projects.map((p) =>
-              p.id === project.id ? project : p
+              p.id === project.id ? project : p,
             )
           : [...currentResume.projects, project];
 
@@ -390,7 +390,7 @@ export const useResumeStore = create(
         if (!activeResumeId) return;
         const currentResume = get().resumes[activeResumeId];
         const updatedProjects = currentResume.projects.filter(
-          (p) => p.id !== id
+          (p) => p.id !== id,
         );
         get().updateResume(activeResumeId, { projects: updatedProjects });
       },
@@ -414,7 +414,7 @@ export const useResumeStore = create(
         if (activeResumeId) {
           const currentResume = resumes[activeResumeId];
           const basicInfoSection = currentResume.menuSections.find(
-            (section) => section.id === "basic"
+            (section) => section.id === "basic",
           );
           const reorderedSections = [
             basicInfoSection,
@@ -436,7 +436,7 @@ export const useResumeStore = create(
           const updatedSections = currentResume.menuSections.map((section) =>
             section.id === sectionId
               ? { ...section, enabled: !section.enabled }
-              : section
+              : section,
           );
           get().updateResume(activeResumeId, { menuSections: updatedSections });
         }
@@ -527,7 +527,7 @@ export const useResumeStore = create(
           const updatedCustomData = {
             ...currentResume.customData,
             [sectionId]: currentResume.customData[sectionId].map((item) =>
-              item.id === itemId ? { ...item, ...updates } : item
+              item.id === itemId ? { ...item, ...updates } : item,
             ),
           };
           get().updateResume(activeResumeId, { customData: updatedCustomData });
@@ -541,7 +541,7 @@ export const useResumeStore = create(
           const updatedCustomData = {
             ...currentResume.customData,
             [sectionId]: currentResume.customData[sectionId].filter(
-              (item) => item.id !== itemId
+              (item) => item.id !== itemId,
             ),
           };
           get().updateResume(activeResumeId, { customData: updatedCustomData });
@@ -618,6 +618,11 @@ export const useResumeStore = create(
     }),
     {
       name: "resume-storage",
-    }
-  )
+      partialize: (state) => ({
+        resumes: state.resumes,
+        activeResumeId: state.activeResumeId,
+        activeResume: state.activeResume,
+      }),
+    },
+  ),
 );
